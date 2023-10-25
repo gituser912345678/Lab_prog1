@@ -1,33 +1,51 @@
 package Main;
+import org.w3c.dom.Node;
 import pokemons.*;
 import ru.ifmo.se.pokemon.Battle;
 import ru.ifmo.se.pokemon.Pokemon;
 import pokemons.Slowking;
+import ru.ifmo.se.pokemon.*;
+import ru.ifmo.se.pokemon.Type;
+
+import java.util.ArrayList;
+import java.util.Queue;
+import java.lang.reflect.*;
+import java.util.LinkedList;
+
 
 public class Main {
-    public static void main(String[] args) {
-        Battle b = new Battle();
-        Pokemon[] str = new Pokemon[]{new Slowpoke("slowpoke", 1), new Slowking("slowking", 1), new Kyogre("kyogre", 1), new Blissey("blissey", 1), new Happiny("happiny", 1), new Chansey("chansey", 1)};
-        int Team1 = 0;
-        int Team2 = 0;
-        for (Pokemon i : str) {
-            if (Math.random() > 0.5){
-                b.addAlly(i);
-                Team1 += 1;
-            }
-            else {
-                b.addFoe(i);
-                Team2 += 1;
-            }
-        }
-        if (Team1 == 0){
-            System.out.println("Team1 - нет игроков");
-        }
-        else if (Team2 == 0){
-            System.out.println("Team1 - нет игроков");
+    private static Class cls;
+
+    public static void main(String[] args) throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException {
+        Battle privateObject = new Battle();
+
+        privateObject.addAlly(new Slowpoke("slowpoke", 1));
+        privateObject.addAlly(new Slowpoke("slowpoke", 1));
+        privateObject.addFoe(new Slowpoke("slowpoke", 1));
+
+        Field privateStringField = Battle.class.getDeclaredField("allies");
+        privateStringField.setAccessible(true);
+
+        Object o = privateStringField.get(privateObject);
+
+        Field f = o.getClass().getDeclaredField("team");
+        f.setAccessible(true);
+        LinkedList<Pokemon> f1 = (LinkedList) f.get(o);
+
+        Field privateStringField1 = Battle.class.getDeclaredField("foes");
+        privateStringField1.setAccessible(true);
+
+        Object o1 = privateStringField1.get(privateObject);
+
+        Field f3 = o1.getClass().getDeclaredField("team");
+        f3.setAccessible(true);
+        LinkedList<Pokemon> f2 = (LinkedList) f3.get(o1);
+
+        if (f1.isEmpty() == true || f2.isEmpty() == true){
+            System.out.println("Неполная команда");
         }
         else {
-            b.go();
+            privateObject.go();
         }
     }
     public static boolean chance(double chance){
